@@ -41,12 +41,12 @@ const Login = () => {
       const response = await axios.post(URI_LOGIN, { email, password });
 
       if (response.data?.token) {
-        const rol = response.data.user.id_roleFK;
+        const rol = response.data.user.role_id;
       
         localStorage.setItem("token", response.data.token); // Guardar token
         localStorage.setItem("rol", rol); // Guardar el id_rolFK
-        localStorage.setItem("user", response.data.user.id_userPK); // Guardar el id_userPK
-        localStorage.setItem("name_user", response.data.user.name); // Guardar el name_user
+        localStorage.setItem("user", response.data.user.id); // Guardar el id_userPK
+        localStorage.setItem("name_user", response.data.user.name_user); // Guardar el name_user
         
       
         // Redirección según el rol
@@ -178,58 +178,6 @@ const Login = () => {
     </Box>
   )
 
-  // return (
-  //   <div className="login-background">
-  //     <div className="login-card">
-  //       <div className="login-avatar">
-
-  //       </div>
-
-
-  //       <h2 className="login-title">Iniciar sesión</h2>
-
-  //       {error && <div className="login-error">{error}</div>}
-
-  //       <form onSubmit={handleLogin}>
-  //         <input
-  //           className="login-input"
-  //           type="email"
-  //           placeholder="Correo electrónico"
-  //           value={email}
-  //           onChange={(e) => setEmail(e.target.value)}
-  //           required
-  //         />
-  //         <input
-  //           className="login-input"
-  //           type="password"
-  //           placeholder="Contraseña"
-  //           value={password}
-  //           onChange={(e) => setPassword(e.target.value)}
-  //           required
-  //         />
-
-  //         {/* Botón para iniciar sesion */}
-  //         <button
-  //           className="login-button"
-  //           type="submit"
-  //           disabled={loading}
-  //         >
-  //           {loading ? "Cargando..." : "Iniciar sesión"}
-  //         </button>
-
-  //        {/* Botón para crear usuario */}
-  //         <button
-  //           className="login-button"
-  //           type="button"
-  //           onClick={() => navigate("/createUser")}
-  //           disabled={loading}
-  //         >
-  //           Crear Usuario
-  //         </button>
-  //       </form>
-  //     </div>
-  //   </div>
-  // );
 
 
 };

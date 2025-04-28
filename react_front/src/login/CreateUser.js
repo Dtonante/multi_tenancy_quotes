@@ -36,7 +36,6 @@ const CreateUsers = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const role_id = 2;
 
   useEffect(() => {
     // Obtener la lista de tenants
@@ -62,8 +61,7 @@ const CreateUsers = () => {
         name_user,
         tenant_id: tenantId, 
         cellPhoneNumber,
-        password,
-        role_id,
+        password
       });
 
       if (response.status === 201) {
