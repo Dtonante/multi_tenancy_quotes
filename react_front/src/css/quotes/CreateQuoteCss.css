@@ -1,0 +1,75 @@
+/* customCalendar.css */
+
+.react-calendar {
+  width: 100%;
+  min-width: 700px; 
+  background: #ffffff;
+  border: none;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); 
+  padding: 24px;
+  font-size: 1.1rem; 
+}
+
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1em;
+}
+
+.react-calendar__tile {
+  background: none;
+  text-align: center;
+  padding: 10px 6px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.react-calendar__tile--active {
+  background: #1976d2;
+  color: white;
+}
+
+.react-calendar__tile--now {
+  background: #e3f2fd;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.react-calendar__tile:hover {
+  background-color: #bbdefb;
+  cursor: pointer;
+}
+
+
+/* Media query para pantallas pequeñas (móviles) */
+@media (max-width: 600px) {
+  .react-calendar {
+    min-width: 100%;  /* Hace que el calendario ocupe el 100% del ancho disponible */
+    max-width: 500px; /* Limita el ancho máximo a 500px en pantallas pequeñas */
+    padding: 16px;    /* Reduce el padding para ajustarse mejor a la pantalla */
+    font-size: 1rem;  /* Ajusta el tamaño de la fuente para pantallas más pequeñas */
+  }
+
+  .react-calendar__tile {
+    padding: 8px 4px;  /* Ajusta el padding de los tiles */
+  }
+
+  .react-calendar__tile--active {
+    background: #1976d2;
+    color: white;
+  }
+
+  .react-calendar__tile--now {
+    background: #e3f2fd;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+
+  .react-calendar__tile:hover {
+    background-color: #bbdefb;
+    cursor: pointer;
+  }
+}

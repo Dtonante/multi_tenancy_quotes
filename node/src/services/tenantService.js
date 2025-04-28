@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
-import { DefineTenantAssociations } from "../models/associations.js";  // Asegúrate de importar correctamente las asociaciones
+import DefineTenantAssociations from "../models/associations.js";  // Asegúrate de importar correctamente las asociaciones
 
-export const createDefaultRolesAndAdminUser = async (tenantSequelize, name_tenant) => {
+export const createDefaultRolesAndAdminUser = async (tenantSequelize, name_tenant, tenant_id) => {
   const { User, Role } = DefineTenantAssociations(tenantSequelize, name_tenant);
 
   try {
@@ -21,6 +21,7 @@ export const createDefaultRolesAndAdminUser = async (tenantSequelize, name_tenan
         email: `admin@${name_tenant.toLowerCase()}.com`,
         password: hashedAdminPassword,
         role_id: adminRole[0].id,
+        tenant_id: tenant_id,  // Asociamos el tenant_id al usuario admin
       },
     });
 
@@ -29,5 +30,3 @@ export const createDefaultRolesAndAdminUser = async (tenantSequelize, name_tenan
     console.error("Error al crear roles y usuario admin:", error);
   }
 };
-
-

@@ -3,7 +3,7 @@ import DefineRoleModelTenant from "./RoleModelTenant.js";
 import DefineQuoteModelTenant from "./QuoteModelTenant.js";
 
 // Aquí se definen las relaciones
-export function DefineTenantAssociations(sequelize, name_tenant) {
+function DefineTenantAssociations(sequelize, name_tenant) {
     const User = DefineUserModelTenant(sequelize, name_tenant);
     const Role = DefineRoleModelTenant(sequelize, name_tenant);
     const Quote = DefineQuoteModelTenant(sequelize, name_tenant);
