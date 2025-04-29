@@ -1,17 +1,22 @@
 import bcrypt from "bcryptjs";
-import DefineTenantAssociations from "../models/associations.js";  // Asegúrate de importar correctamente las asociaciones
+import DefineTenantAssociations from "../models/associations.js";
 
 export const createDefaultRolesAndAdminUser = async (tenantSequelize, name_tenant, tenant_id) => {
   const { User, Role } = DefineTenantAssociations(tenantSequelize, name_tenant);
 
   try {
-    // 1. Crear roles por defecto solo si no existen
-    const [adminRole, clientRole] = await Promise.all([
-      Role.findOrCreate({ where: { name_role: "admin" } }),
-      Role.findOrCreate({ where: { name_role: "cliente" } }),
-    ]);
+    // Crear roles por defecto solo si no existen
+    const [adminRoleInstance] = await Role.findOrCreate({
+      where: { name_role: "admin" },
+    });
 
-    // 2. Crear usuario admin inicial si no existe
+    const [clientRoleInstance] = await Role.findOrCreate({
+      where: { name_role: "cliente" },
+    });
+
+    const adminRoleId = adminRoleInstance.id;
+
+    // Crear usuario admin inicial si no existe
     const hashedAdminPassword = await bcrypt.hash("123", 10);
     await User.findOrCreate({
       where: { email: `admin@${name_tenant.toLowerCase()}.com` },
@@ -20,8 +25,8 @@ export const createDefaultRolesAndAdminUser = async (tenantSequelize, name_tenan
         cellPhoneNumber: "123",
         email: `admin@${name_tenant.toLowerCase()}.com`,
         password: hashedAdminPassword,
-        role_id: adminRole[0].id,
-        tenant_id: tenant_id,  // Asociamos el tenant_id al usuario admin
+        role_id: adminRoleId,
+        tenant_id: tenant_id,
       },
     });
 

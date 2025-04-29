@@ -12,7 +12,7 @@ function DefineTenantAssociations(sequelize, name_tenant) {
     // Un rol puede tener muchos usuarios
     Role.hasMany(User, { foreignKey: "role_id" });
     // Un usuario pertenece a un rol
-    User.belongsTo(Role, { foreignKey: "role_id" });
+    User.belongsTo(Role, { foreignKey: "role_id", as: "role" });
     // Un usuario puede tener muchas citas
     User.hasMany(Quote, { foreignKey: "user_id" });
     // Una cita pertenece a un usuario

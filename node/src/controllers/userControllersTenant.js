@@ -5,9 +5,10 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import paginate from "../middlewares/paginate.js";
 import generateFilters from "../middlewares/filter.js";
-import { getDbNameByTenantId } from "../services/nameTenantForID.js";
+import getDbNameByTenantId from "../services/nameTenantForID.js";
 import getTenantConnection from "../config/tenantConnection.js";
 import TenantModel from "../models/TenantModel.js";
+import DefineTenantAssociations from "../models/associations.js";
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ export const getUser = async (req, res) => {
 
 // Crear un usuario con encriptacion de contraseña
 export const createUser = async (req, res) => {
-    const { name_user, cellPhoneNumber, email, password, role_id, tenant_id } = req.body;
+    const { name_user, cellPhoneNumber, password, role_id, tenant_id } = req.body;
 
     if (!name_user || !cellPhoneNumber || !password || !tenant_id) {
         return res.status(400).json({ error: "Todos los campos son obligatorios" });
@@ -78,43 +79,6 @@ export const createUser = async (req, res) => {
     }
 };
 
-
-// Login y generación de JWT
-// export const login = async (req, res) => {
-//     const { email, password } = req.body;
-
-//     try {
-//         const usuario = await DefineUserModelTenant.findOne({ where: { email } });
-
-//         if (!usuario || !(await bcrypt.compare(password, usuario.password))) {
-//             return res.status(401).json({ error: "Credenciales inválidas" });
-//         }
-
-//         // Generar token con id, email y rol
-//         const token = jwt.sign(
-//             {
-//                 id: usuario.id_userPK,
-//                 email: usuario.email,
-//                 role_id: usuario.id_roleFK
-//             },
-//             process.env.JWT_SECRET,
-//             { expiresIn: "1h" }
-//         );
-
-//         // Eliminar contraseña antes de enviar al cliente
-//         const { password: _, ...userWithoutPassword } = usuario.toJSON();
-
-//         res.json({
-//             token,
-//             user: userWithoutPassword
-//         });
-
-//     } catch (error) {
-//         console.error("Error al iniciar sesión:", error);
-//         res.status(500).json({ error: "Error en el servidor" });
-//     }
-// };
-
 // Login y generación de JWT
 export const login = async (req, res) => {
     const { email, password } = req.body;
@@ -147,10 +111,20 @@ export const login = async (req, res) => {
         const sequelizeTenant = getTenantConnection(dbName);
 
         // 5. Definir el modelo User para este tenant
-        const UserModel = DefineUserModelTenant(sequelizeTenant, nameTenant);
+        const { User: UserModel, Role: RoleModel } = DefineTenantAssociations(sequelizeTenant, nameTenant);
+
+
 
         // 6. Buscar el usuario en su tabla de users
-        const usuario = await UserModel.findOne({ where: { email } });
+        const usuario = await UserModel.findOne({
+            where: { email },
+            include: {
+              model: RoleModel, 
+              as: 'role',            // referencia al modelo Role
+              attributes: ['name_role']
+            }
+          });
+          
 
         if (!usuario) {
             return res.status(401).json({ error: "Credenciales inválidas" });
@@ -166,9 +140,12 @@ export const login = async (req, res) => {
         const token = jwt.sign(
             {
                 id: usuario.id,
+                name_user: usuario.name_user,
                 email: usuario.email,
                 role_id: usuario.role_id,
-                tenant_id: usuario.tenant_id, // opcional
+                name_role: usuario.role?.name_role,
+                tenant_id: usuario.tenant_id,
+                name_tenant: nameTenant, 
             },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
@@ -188,6 +165,7 @@ export const login = async (req, res) => {
         res.status(500).json({ error: "Error en el servidor" });
     }
 };
+
 
 
 

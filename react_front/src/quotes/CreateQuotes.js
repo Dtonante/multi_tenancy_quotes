@@ -3,11 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../sidebar/Sidebar.js";
 import "../css/quotes/CreateQuoteCss.css";
-import "react-datepicker/dist/react-datepicker.css";
 import { Box, Typography, TextField, Button, Paper, Grid, Alert, IconButton } from "@mui/material";
 import { CalendarToday } from "@mui/icons-material";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { jwtDecode } from "jwt-decode";
 
 
 const URI_CREATE_QUOTE = "http://localhost:3000/api/v1/Tenant/quotes";
@@ -23,9 +23,18 @@ const CreateQuotes = () => {
   const toggleSidebar = () => setSidebarAbierto(!sidebarAbierto);
 
   const navigate = useNavigate();
-  const id_userFK = localStorage.getItem("user");
-  const name_user = localStorage.getItem("name_user");
   const token = localStorage.getItem("token");
+  let name_user = "";
+  let user_id = "";
+  let tenant_id;
+  
+  if (token) {
+    const decoded = jwtDecode(token);
+    name_user = decoded.name_user;
+    user_id = decoded.user_id; 
+    tenant_id = decoded.tenant_id;
+
+  }
 
   useEffect(() => {
     const fetchAvailableHours = async () => {
@@ -35,7 +44,7 @@ const CreateQuotes = () => {
 
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/v1/Tenant/quotes/disponibles/horas?fecha=${formattedDate}`,
+          `http://localhost:3000/api/v1/Tenant/quotes/disponibles/horas?fecha=${formattedDate}&tenant_id=${tenant_id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -56,7 +65,7 @@ const CreateQuotes = () => {
     setMensaje("");
     setError("");
 
-    if (!id_userFK) {
+    if (!user_id) {
       setError("No se encontró el ID del usuario.");
       return;
     }
@@ -68,7 +77,7 @@ const CreateQuotes = () => {
 
       await axios.post(
         URI_CREATE_QUOTE,
-        { id_userFK, dateAndTimeQuote: fechaFormateada },
+        { user_id, dateAndTimeQuote: fechaFormateada },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setMensaje("Cita creada con éxito.");
@@ -196,7 +205,7 @@ const CreateQuotes = () => {
             {availableHours.length > 0 ? (
               <Grid container spacing={1}>
                 {availableHours.map((hora, index) => (
-                  <Grid item key={index}>
+                  <Grid key={index}>
                     <Button
                       variant="outlined"
                       size="small"

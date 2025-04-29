@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 
 import {
   Box,
@@ -36,30 +38,28 @@ const Login = () => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
+  
     try {
       const response = await axios.post(URI_LOGIN, { email, password });
-
+  
       if (response.data?.token) {
-        const rol = response.data.user.role_id;
-      
-        localStorage.setItem("token", response.data.token); // Guardar token
-        localStorage.setItem("rol", rol); // Guardar el id_rolFK
-        localStorage.setItem("user", response.data.user.id); // Guardar el id_userPK
-        localStorage.setItem("name_user", response.data.user.name_user); // Guardar el name_user
-        
-      
-        // Redirección según el rol
-        if (rol == 1) {
-          navigate("/homeClients");
-        } else if (rol == 2) {
+        const token = response.data.token;
+  
+        // Guardar solo el token
+        localStorage.setItem("token", token);
+  
+        // Decodificar token para obtener datos del usuario
+        const decoded = jwtDecode(token);
+        const rol = decoded.name_role;
+  
+        // Redirigir según el rol
+        if (rol == "admin" || rol == "cliente") {
           navigate("/homeClients");
         } else {
           setError("Rol no reconocido.");
         }
       }
-
-
+  
     } catch (err) {
       console.error("Error al iniciar sesión:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Email o contraseña incorrectos");
@@ -67,6 +67,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <Box

@@ -1,6 +1,6 @@
 import TenantModel from "../models/TenantModel.js";
 
-export async function getDbNameByTenantId(tenant_id) {
+ async function getDbNameByTenantId(tenant_id) {
   const tenant = await TenantModel.findOne({ where: { id: tenant_id } });
   if (!tenant) {
     throw new Error("Tenant no encontrado");
@@ -10,3 +10,4 @@ export async function getDbNameByTenantId(tenant_id) {
     nameTenant: tenant.name_tenant   // nuevo: nombre del tenant
   };
 }
+export default getDbNameByTenantId;
