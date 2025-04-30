@@ -138,9 +138,9 @@ const QuotesCalendar = () => {
                     <Paper elevation={2} sx={{ padding: 2, borderRadius: 2 }}>
                         <List>
                             {selectedDateQuotes.map((quote) => (
-                                <ListItem key={quote.id_quotePK}>
+                                <ListItem key={quote.id}>
                                     <ListItemText
-                                        primary={`👤 ${quote.tbl_user?.name}`}
+                                        primary={`👤 ${quote.user.name_user}`}
                                         secondary={`🕒 ${new Date(quote.dateAndTimeQuote).toLocaleTimeString([], {
                                             hour: "2-digit",
                                             minute: "2-digit",

@@ -19,6 +19,7 @@ import {
     useMediaQuery,
     useTheme,
 } from "@mui/material";
+import { jwtDecode } from "jwt-decode";
 
 const CompShowCitasUsuario = () => {
     const [citas, setCitas] = useState([]);
@@ -30,13 +31,21 @@ const CompShowCitasUsuario = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const toggleSidebar = () => setSidebarAbierto(!sidebarAbierto);
-    const id_userFK = localStorage.getItem("user");
     const token = localStorage.getItem("token");
+    let user_id;
+    let tenant_id;
+
+    if (token) {
+        const decoded = jwtDecode(token);
+        user_id = decoded.id;
+        tenant_id = decoded.tenant_id;
+
+    }
 
     const fetchCitas = async (page = 1) => {
         try {
             const response = await axios.get(
-                `http://localhost:3000/api/v1/Tenant/quotes/all/${id_userFK}?page=${page}&limit=5`,
+                `http://localhost:3000/api/v1/Tenant/quotes/all/${tenant_id}/${user_id}?page=${page}&limit=5`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -53,10 +62,10 @@ const CompShowCitasUsuario = () => {
     };
 
     useEffect(() => {
-        if (id_userFK && token) {
+        if (user_id && token) {
             fetchCitas(paginaActual);
         }
-    }, [id_userFK, token, paginaActual]);
+    }, [user_id, token, paginaActual]);
 
     const formatDate = (isoDate) => {
         const date = new Date(isoDate);
@@ -106,13 +115,13 @@ const CompShowCitasUsuario = () => {
                                 <TableBody>
                                     {citas.length > 0 ? (
                                         citas.map((cita) => (
-                                            <TableRow key={cita.id_quotePK}>
+                                            <TableRow key={cita.id}>
                                                 <TableCell>{formatDate(cita.dateAndTimeQuote)}</TableCell>
                                                 <TableCell>{cita.status}</TableCell>
                                                 <TableCell>
                                                     {cita.status === "activa" && (
                                                         <CancelButtonQuote
-                                                            idQuote={cita.id_quotePK}
+                                                            idQuote={cita.id}
                                                             onCancelSuccess={() => fetchCitas(paginaActual)}
                                                         />
                                                     )}
@@ -153,65 +162,6 @@ const CompShowCitasUsuario = () => {
         </Box>
     );
 
-    // return (
-    //     <div style={{ display: "flex" }}>
-    //         <Sidebar isOpen={sidebarAbierto} toggleSidebar={toggleSidebar} />
-
-    //         <div
-    //             style={{
-    //                 marginLeft: sidebarAbierto ? "200px" : "-5px",
-    //                 transition: "margin-left 0.3s",
-    //                 padding: "20px",
-    //                 width: "100%",
-    //             }}
-    //         >
-    //             <h2>Mis Citas</h2>
-    //             <table border="1" cellPadding="8" cellSpacing="0" style={{ width: "100%", textAlign: "left" }}>
-    //                 <thead>
-    //                     <tr>
-
-    //                         <th>Fecha y Hora</th>
-    //                         <th>Estado</th>
-    //                         <th>Acciones</th>
-    //                     </tr>
-    //                 </thead>
-    //                 <tbody>
-    //                     {citas.length > 0 ? (
-    //                         citas.map((cita) => (
-    //                             <tr key={cita.id_quotePK}>
-    //                                 <td>{formatDate(cita.dateAndTimeQuote)}</td>
-    //                                 <td>{cita.status}</td>
-    //                                 <td>
-    //                                     {cita.status === "activa" && (
-    //                                         <CancelButtonQuote
-    //                                             idQuote={cita.id_quotePK}
-    //                                             onCancelSuccess={() => fetchCitas(paginaActual)}
-    //                                         />
-    //                                     )}
-    //                                 </td>
-    //                             </tr>
-    //                         ))
-    //                     ) : (
-    //                         <tr>
-    //                             <td colSpan="2">No hay citas registradas.</td>
-    //                         </tr>
-    //                     )}
-    //                 </tbody>
-    //             </table>
-
-    //             {/* Controles de paginación */}
-    //             <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "10px" }}>
-    //                 <button onClick={handleAnterior} disabled={paginaActual === 1}>
-    //                     Anterior
-    //                 </button>
-    //                 <span>Página {paginaActual} de {totalPaginas}</span>
-    //                 <button onClick={handleSiguiente} disabled={paginaActual === totalPaginas}>
-    //                     Siguiente
-    //                 </button>
-    //             </div>
-    //         </div>
-    //     </div>
-    // );
 };
 
 export default CompShowCitasUsuario;

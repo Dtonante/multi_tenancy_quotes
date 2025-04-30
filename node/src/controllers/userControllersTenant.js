@@ -29,6 +29,11 @@ export const getUser = async (req, res) => {
 };
 
 
+
+
+
+
+
 // Crear un usuario con encriptacion de contraseña
 export const createUser = async (req, res) => {
     const { name_user, cellPhoneNumber, password, role_id, tenant_id } = req.body;

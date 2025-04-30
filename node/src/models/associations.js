@@ -16,7 +16,7 @@ function DefineTenantAssociations(sequelize, name_tenant) {
     // Un usuario puede tener muchas citas
     User.hasMany(Quote, { foreignKey: "user_id" });
     // Una cita pertenece a un usuario
-    Quote.belongsTo(User, { foreignKey: "user_id" })
+    Quote.belongsTo(User, { foreignKey: "user_id", as: "user" })
 
 
     // Sincronizar asociaciones
@@ -26,7 +26,7 @@ function DefineTenantAssociations(sequelize, name_tenant) {
         console.error("Error al sincronizar las relaciones:", error);
     });
 
-    return { User, Role };
+    return { User, Role, Quote };
 }
 
 export default DefineTenantAssociations;

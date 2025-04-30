@@ -25,13 +25,13 @@ const CreateQuotes = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   let name_user = "";
-  let user_id = "";
+  let user_id;
   let tenant_id;
   
   if (token) {
     const decoded = jwtDecode(token);
     name_user = decoded.name_user;
-    user_id = decoded.user_id; 
+    user_id = decoded.id; 
     tenant_id = decoded.tenant_id;
 
   }
@@ -44,7 +44,7 @@ const CreateQuotes = () => {
 
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/v1/Tenant/quotes/disponibles/horas?fecha=${formattedDate}&tenant_id=${tenant_id}`,
+          `http://localhost:3000/api/v1/Tenant/quotes/disponibles/horas?fecha=${formattedDate}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -58,7 +58,10 @@ const CreateQuotes = () => {
     };
 
     fetchAvailableHours();
+
+    console.log("---", dateAndTimeQuote)
   }, [dateAndTimeQuote]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,6 +70,7 @@ const CreateQuotes = () => {
 
     if (!user_id) {
       setError("No se encontró el ID del usuario.");
+      
       return;
     }
 
@@ -75,10 +79,10 @@ const CreateQuotes = () => {
       const fechaFormateada = dateAndTimeQuote.toLocaleString("sv-SE").replace(" ", "T");
       console.log("Fecha enviada sin UTC:", fechaFormateada);
 
-      await axios.post(
-        URI_CREATE_QUOTE,
-        { user_id, dateAndTimeQuote: fechaFormateada },
-        { headers: { Authorization: `Bearer ${token}` } }
+      await axios.post( URI_CREATE_QUOTE,
+        { dateAndTimeQuote: fechaFormateada },
+        { headers: { Authorization: `Bearer ${token}` } },
+      
       );
       setMensaje("Cita creada con éxito.");
       setDateAndTimeQuote("");

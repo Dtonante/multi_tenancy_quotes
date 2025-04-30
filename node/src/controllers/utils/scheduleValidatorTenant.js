@@ -1,5 +1,5 @@
 
-import ScheduleConfigModel from "../../models/ScheduleConfigModelTenant.js";
+import DefineScheduleConfigModelTenant from "../../models/ScheduleConfigModelTenant.js";
 
 export const toMinutes = (timeStr) => {
   const [hours, minutes] = timeStr.split(":").map(Number);
@@ -8,7 +8,8 @@ export const toMinutes = (timeStr) => {
 
 
 
-export const validateScheduleForDate = async (dateTime) => {
+export const validateScheduleForDate = async (dateTime, sequelizeTenant, nameTenant) => {
+  const ScheduleConfigModel = DefineScheduleConfigModelTenant(sequelizeTenant, nameTenant);
   const localDateTime = new Date(dateTime); // ya está en local
 
   const totalMinutes = localDateTime.getHours() * 60 + localDateTime.getMinutes();
