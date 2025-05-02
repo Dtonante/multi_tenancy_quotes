@@ -1,5 +1,5 @@
 
-import DefineScheduleConfigModelTenant from "../../models/ScheduleConfigModelTenant.js";
+import DefineScheduleConfigModelTenant from "../models/ScheduleConfigModelTenant.js";
 
 export const toMinutes = (timeStr) => {
   const [hours, minutes] = timeStr.split(":").map(Number);

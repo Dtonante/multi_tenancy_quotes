@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { TextField, Button,  Box, Typography, Slider, Paper } from "@mui/material";
+import { TextField, Button, Box, Typography, Slider, Paper } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -20,6 +20,8 @@ const ScheduleConfigurator = () => {
     const MIN_HOUR = 6;
     const MAX_HOUR = 22;
 
+    const token = localStorage.getItem("token");
+
     useEffect(() => {
         fetchConfig(selectedDate.format("YYYY-MM-DD"));
     }, [selectedDate]);
@@ -27,7 +29,11 @@ const ScheduleConfigurator = () => {
     const fetchConfig = async (date) => {
         try {
             console.log("date", date);
-            const response = await axios.get(`http://localhost:3000/api/v1/Tenant/scheduleConfig/config?date=${date}`);
+            const response = await axios.get(
+                `http://localhost:3000/api/v1/Tenant/scheduleConfig/config?date=${date}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
             const config = response.data;
             console.log("date", date);
 
@@ -61,7 +67,11 @@ const ScheduleConfigurator = () => {
                 workEnd: formatTime(endHour),
                 lunchStart: formatTime(lunchStart),
                 lunchEnd: formatTime(lunchEnd),
-            });
+            },
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
 
             alert("✅ Configuración guardada correctamente");
             setIsExistingConfig(true);

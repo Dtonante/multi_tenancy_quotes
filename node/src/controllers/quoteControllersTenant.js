@@ -3,7 +3,7 @@ import DefineUserModelTenant from "../models/UserModelTenant.js";
 import paginate from "../middlewares/paginate.js";
 import generateFilters from "../middlewares/filter.js";
 import { Op } from "sequelize";
-import { toMinutes, validateScheduleForDate } from "./utils/scheduleValidatorTenant.js";
+import { toMinutes, validateScheduleForDate } from "../utils/scheduleValidatorTenant.js";
 import { DateTime } from 'luxon';
 import DefineScheduleConfigModelTenant from "../models/ScheduleConfigModelTenant.js";
 import getTenantConnection from "../config/tenantConnection.js";
@@ -124,6 +124,7 @@ export const createQuote = async (req, res) => {
     }
 };
 
+//tenant_id del token
 // obtener todas las citas sin paginado y filtros para el calendario
 export const getAllQuotes = async (req, res) => {
     try {
@@ -146,7 +147,7 @@ export const getAllQuotes = async (req, res) => {
                 dateAndTimeQuote: {
                     [Op.gte]: now // solo citas futuras desde el momento actual
                 },
-                status: 'activa' // solo citas activas
+                status: 'activa' 
             },
             include: [{
                 model: UserModel,
@@ -343,10 +344,14 @@ export const cancelQuote = async (req, res) => {
     }
 };
 
+
+// Tenant del token
 // quotes for id_userFK con paginado y filtros
 export const getQuotesByUser = async (req, res) => {
     try {
-        const { user_id, tenant_id } = req.params;
+        const { user_id } = req.params;
+        const { tenant_id } = req.usuario;
+        
 
         // 1. Obtener el nombre de la base de datos y el nombre del tenant
         const { dbName, nameTenant } = await getDbNameByTenantId(tenant_id);

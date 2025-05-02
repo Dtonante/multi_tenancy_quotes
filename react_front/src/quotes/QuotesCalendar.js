@@ -3,15 +3,7 @@ import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import axios from "axios";
 import "../css/quotes/QuotesCalendarCss.css";
-import {
-    Box,
-    Typography,
-    Paper,
-    Grid,
-    List,
-    ListItem,
-    ListItemText,
-} from "@mui/material";
+import { Box, Typography, Paper, Grid,  List, ListItem, ListItemText, } from "@mui/material";
 
 const URI_GET_QUOTES_CALENDAR = "http://localhost:3000/api/v1/Tenant/quotes/all/calendar";
 

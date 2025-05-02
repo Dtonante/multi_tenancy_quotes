@@ -2,23 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../sidebar/Sidebar";
 import CancelButtonQuote from "../components/cancelButtonQuote/CancelButtonQuote";
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Typography,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Stack,
-    useMediaQuery,
-    useTheme,
-} from "@mui/material";
+import { Box,  Button,  Card, CardContent, Typography, Table,  TableBody,  TableCell, TableContainer, TableHead, TableRow, Paper, Stack,  useMediaQuery, useTheme } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
 
 const CompShowCitasUsuario = () => {
@@ -33,23 +17,18 @@ const CompShowCitasUsuario = () => {
     const toggleSidebar = () => setSidebarAbierto(!sidebarAbierto);
     const token = localStorage.getItem("token");
     let user_id;
-    let tenant_id;
-
+ 
     if (token) {
         const decoded = jwtDecode(token);
         user_id = decoded.id;
-        tenant_id = decoded.tenant_id;
-
     }
 
     const fetchCitas = async (page = 1) => {
         try {
             const response = await axios.get(
-                `http://localhost:3000/api/v1/Tenant/quotes/all/${tenant_id}/${user_id}?page=${page}&limit=5`,
+                `http://localhost:3000/api/v1/Tenant/quotes/all/${user_id}?page=${page}&limit=5`,
                 {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
             setCitas(response.data.data);

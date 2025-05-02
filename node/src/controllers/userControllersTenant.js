@@ -14,12 +14,32 @@ dotenv.config();
 
 
 // Obtener todos los usuarios con paginado y filtros
-export const getUsers = (req, res) => {
-    const allowedFilters = ["name", "email", "cellPhoneNumber"]; // Campos permitidos para filtrar
-    const filters = generateFilters(req.query, allowedFilters);
+export const getUsers = async (req, res) => {
+    try {
+        const { tenant_id } = req.usuario;
 
-    paginate(DefineUserModelTenant, req, res, filters);
+        // Filtros permitidos
+        const allowedFilters = ["name", "email", "cellPhoneNumber"];
+        const filters = generateFilters(req.query, allowedFilters);
+
+        // 1. Obtener el nombre de la base de datos y el nombre del tenant
+        const { dbName, nameTenant } = await getDbNameByTenantId(tenant_id);
+
+        // 2. Crear la conexión a esa base de datos del tenant
+        const sequelizeTenant = getTenantConnection(dbName);
+
+        // 3. Obtener el modelo definido para ese tenant
+        const UserModel = DefineUserModelTenant(sequelizeTenant, nameTenant);
+
+        // 4. Ejecutar la paginación con filtros sobre el modelo correcto
+        paginate(UserModel, req, res, filters);
+
+    } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
 };
+
 
 // Obtener un usuario espesifico por id
 export const getUser = async (req, res) => {
@@ -27,10 +47,6 @@ export const getUser = async (req, res) => {
     if (!usuario) return res.status(404).json({ error: "Usuario no encontrado" });
     res.json(usuario);
 };
-
-
-
-
 
 
 
@@ -124,12 +140,12 @@ export const login = async (req, res) => {
         const usuario = await UserModel.findOne({
             where: { email },
             include: {
-              model: RoleModel, 
-              as: 'role',            // referencia al modelo Role
-              attributes: ['name_role']
+                model: RoleModel,
+                as: 'role',            // referencia al modelo Role
+                attributes: ['name_role']
             }
-          });
-          
+        });
+
 
         if (!usuario) {
             return res.status(401).json({ error: "Credenciales inválidas" });
@@ -150,7 +166,7 @@ export const login = async (req, res) => {
                 role_id: usuario.role_id,
                 name_role: usuario.role?.name_role,
                 tenant_id: usuario.tenant_id,
-                name_tenant: nameTenant, 
+                name_tenant: nameTenant,
             },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }

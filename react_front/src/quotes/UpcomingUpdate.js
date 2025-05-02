@@ -78,7 +78,7 @@ const CompShowQuotes = () => {
             <Sidebar isOpen={sidebarAbierto} toggleSidebar={toggleSidebar} />
             <Box
                 sx={{
-                    marginLeft: sidebarAbierto ? "200px" : "0px", // Ajuste dinámico del espacio
+                    marginLeft: sidebarAbierto ? "235px" : "0px", // Ajuste dinámico del espacio
                     transition: "margin-left 0.3s", // Transición suave
                     width: "100%", // Asegura que ocupe el 100% del espacio restante
                     position: "relative", // Posicionamiento relativo para evitar solapamientos
@@ -92,7 +92,7 @@ const CompShowQuotes = () => {
                 <Box
                     sx={{
                         width: "100%", // Asegura que el contenedor ocupe todo el ancho disponible
-                        maxWidth: "1500px", // Máximo ancho del contenedor
+                        maxWidth: "1600px", // Máximo ancho del contenedor
                         padding: 3, // Padding alrededor
                         backgroundColor: "#fff", // Fondo blanco
                         borderRadius: 2, // Bordes redondeados
