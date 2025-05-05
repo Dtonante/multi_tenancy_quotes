@@ -2,12 +2,13 @@ import React from "react";
 import axios from "axios";
 import { Button } from "@mui/material"; // Importar Button de Material-UI
 import { jwtDecode } from "jwt-decode";
+import { showCancelSuccess, showCancelConfirmation, showCancelError } from "../alerts/ConfirmCancelAlert";
 
 const CancelButtonQuote = ({ idQuote, onCancelSuccess }) => {
     const token = localStorage.getItem("token");
 
     const handleCancel = async () => {
-        const confirm = window.confirm("Are you sure you want to cancel this appointment?");
+        const confirm = await showCancelConfirmation();
         if (!confirm) return;
 
         try {
@@ -18,11 +19,11 @@ const CancelButtonQuote = ({ idQuote, onCancelSuccess }) => {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            alert("Quote cancelled successfully.");
+            showCancelSuccess();
             if (onCancelSuccess) onCancelSuccess();
         } catch (error) {
             console.error("Error cancelling the quote:", error);
-            alert("An error occurred while cancelling the quote.");
+            showCancelError();
         }
     };
 

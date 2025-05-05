@@ -8,7 +8,7 @@ import { CalendarToday } from "@mui/icons-material";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { jwtDecode } from "jwt-decode";
-
+import AlertMessage from "../components/alerts/alertMessage.js";
 
 const URI_CREATE_QUOTE = "http://localhost:3000/api/v1/Tenant/quotes";
 
@@ -27,11 +27,11 @@ const CreateQuotes = () => {
   let name_user = "";
   let user_id;
   let tenant_id;
-  
+
   if (token) {
     const decoded = jwtDecode(token);
     name_user = decoded.name_user;
-    user_id = decoded.id; 
+    user_id = decoded.id;
     tenant_id = decoded.tenant_id;
 
   }
@@ -70,7 +70,7 @@ const CreateQuotes = () => {
 
     if (!user_id) {
       setError("No se encontró el ID del usuario.");
-      
+
       return;
     }
 
@@ -79,10 +79,10 @@ const CreateQuotes = () => {
       const fechaFormateada = dateAndTimeQuote.toLocaleString("sv-SE").replace(" ", "T");
       console.log("Fecha enviada sin UTC:", fechaFormateada);
 
-      await axios.post( URI_CREATE_QUOTE,
+      await axios.post(URI_CREATE_QUOTE,
         { dateAndTimeQuote: fechaFormateada },
         { headers: { Authorization: `Bearer ${token}` } },
-      
+
       );
       setMensaje("Cita creada con éxito.");
       setDateAndTimeQuote("");
@@ -129,17 +129,9 @@ const CreateQuotes = () => {
             Crear Cita
           </Typography>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          {mensaje && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {mensaje}
-            </Alert>
-          )}
+          {/* Llamada al componente AlertMessage */}
+          <AlertMessage tipo="success" mensaje={mensaje} />
+          <AlertMessage tipo="error" mensaje={error} />
 
           <Box
             component="form"

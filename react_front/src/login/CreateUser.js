@@ -2,34 +2,18 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  CircularProgress,
-  useMediaQuery,
-  useTheme,
-  Grid,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-} from "@mui/material";
+import { Box, Card, CardContent, CardMedia, TextField,  Button, Typography, Alert, CircularProgress, useMediaQuery,  useTheme, Grid,  MenuItem,  Select, InputLabel,  FormControl } from "@mui/material";
+import showSuccessAlert from "../components/alerts/showSuccessAlert";
 
 const URI_CREATE_USER = "http://localhost:3000/api/v1/Tenant/users";
-const URI_LIST_TENANTS = "http://localhost:3000/api/v1/Tenant"; // Ruta para obtener los tenants
+const URI_LIST_TENANTS = "http://localhost:3000/api/v1/Tenant"; 
 
 const CreateUsers = () => {
   const [name_user, setName_user] = useState("");
   const [cellPhoneNumber, setCellPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [tenantId, setTenantId] = useState("");  // Nuevo estado para almacenar el tenant seleccionado
-  const [tenants, setTenants] = useState([]); // Estado para almacenar la lista de tenants
+  const [tenantId, setTenantId] = useState(""); 
+  const [tenants, setTenants] = useState([]); 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -57,15 +41,20 @@ const CreateUsers = () => {
     setLoading(true);
 
     try {
+      const plainPassword = password;
+
       const response = await axios.post(URI_CREATE_USER, {
         name_user,
         tenant_id: tenantId, 
         cellPhoneNumber,
-        password
+        password: plainPassword,
       });
 
       if (response.status === 201) {
-        navigate("/"); // Redirigir al login después de crear el usuario
+        const { email } = response.data.user;
+  
+        await showSuccessAlert(email, plainPassword);
+        navigate("/");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Error al crear usuario");

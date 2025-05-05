@@ -49,6 +49,18 @@ export const getUser = async (req, res) => {
 };
 
 
+//Funcion para crear el correo
+const generarEmailDesdeNombre = (nombreCompleto, nombreTenant) => {
+    const partes = nombreCompleto.trim().split(/\s+/);
+    if (partes.length === 1) {
+      return `${partes[0].toLowerCase()}@${nombreTenant.toLowerCase()}.com`;
+    }
+    const primerNombre = partes[0].toLowerCase();
+    const iniciales = partes.slice(1).map(p => p[0].toLowerCase()).join("");
+    return `${primerNombre}${iniciales}@${nombreTenant.toLowerCase()}.com`;
+  };
+  
+
 
 // Crear un usuario con encriptacion de contraseña
 export const createUser = async (req, res) => {
@@ -73,7 +85,7 @@ export const createUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // 5. Construir automáticamente el email basado en el nombre del usuario y del tenant
-        const email = `${name_user.toLowerCase().replace(/\s+/g, '')}@${nameTenant.toLowerCase()}.com`;
+        const email = generarEmailDesdeNombre(name_user, nameTenant);
 
 
         // 6. Si no se proporciona un role_id, asigna automáticamente el rol de "cliente"
